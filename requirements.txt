@@ -1,2 +1,8 @@
 fastapi
-docker
+python-dotenv
+pydantic
+uvicorn
+pydantic-settings
+sqlalchemy
+alembic
+psycopg2-binary
