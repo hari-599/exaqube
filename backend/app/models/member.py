@@ -1,12 +1,12 @@
-from sqlalchemy import BigInteger, DateTime, String, Boolean,Integer,ForeignKey,DateTime
-from sqlalchemy.orm import Mapped, mapped_column,relationship
+from sqlalchemy import String, Boolean, Integer, ForeignKey, DateTime
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from datetime import datetime
 
 class Member(Base):
     __tablename__ = "members"
-    user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-    server_id: Mapped[int] = mapped_column(ForeignKey("servers.server_id"),primary_key=True, nullable=False)
+    user_id: Mapped[str] = mapped_column(String(100), primary_key=True)
+    server_id: Mapped[str] = mapped_column(ForeignKey("servers.server_id"), primary_key=True, nullable=False)
     username: Mapped[str] = mapped_column(String(100), nullable=False)
 
     display_name: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -30,4 +30,4 @@ class Member(Base):
     is_owner: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
     server = relationship("Server", back_populates="members")
-    messages = relationship("Message", back_populates="member")
+    messages = relationship("Message", back_populates="member", overlaps="server,messages")

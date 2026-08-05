@@ -6,3 +6,6 @@ pydantic-settings
 sqlalchemy
 alembic
 psycopg2-binary
+asyncpg
+pandas
+numpy
