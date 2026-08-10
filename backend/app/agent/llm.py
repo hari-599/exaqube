@@ -1,7 +1,7 @@
 from google import genai
 from dotenv import load_dotenv
 import os
-
+from google.genai import types
 
 load_dotenv()
 
@@ -27,3 +27,36 @@ class LLMClient:
         )
 
         return response.text
+
+    async def generate_with_tools(
+        self,
+        prompt: str,
+        tools: list[dict],
+    ):
+        declarations = [
+            types.FunctionDeclaration(
+                name=tool["name"],
+                description=tool["description"],
+                parameters_json_schema=tool.get("parameters", {}),
+            )
+            for tool in tools
+        ]
+
+        gemini_tools = [
+            types.Tool(
+                function_declarations=declarations
+            )
+        ]
+
+        response = await self.client.aio.models.generate_content(
+            model=self.model,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                tools=gemini_tools,
+                automatic_function_calling=types.AutomaticFunctionCallingConfig(
+                    disable=True
+                ),
+            ),
+        )
+
+        return response

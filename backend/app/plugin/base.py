@@ -49,3 +49,9 @@ class BasePlugin(ABC):
         **kwargs,
     ) -> PluginResult:
         ...
+    @abstractmethod
+    def tool_spec(self) -> dict:
+        return {
+        "name": self.name,
+        "description": self.description,
+    }

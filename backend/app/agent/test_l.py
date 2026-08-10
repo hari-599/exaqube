@@ -1,20 +1,35 @@
 import asyncio
 
 from app.agent.llm import LLMClient
-from app.agent.prompt import SQL_SYSTEM_PROMPT
-from app.core.sql_quard import SQLGuard, SQLGuardError
+from app.agent.orchestrator import AgentOrchestrator
+from app.plugin.query_plugin import QueryPlugin
+from app.plugin.registry import PluginRegistry
+from app.db.database import session_local
+
 
 async def main():
+
     llm = LLMClient()
 
-    question = "Show me the top 5 servers by message count."
+    query_plugin = QueryPlugin(llm)
 
-    prompt = SQL_SYSTEM_PROMPT.format(question=question)
+    registry = PluginRegistry()
+    registry.register(query_plugin)
 
-    sql = await llm.generate(prompt)
-    val_sql = SQLGuard.validate(sql)
-    print("Validated SQL:")
-    print(val_sql)
+    orchestrator = AgentOrchestrator(
+        llm_client=llm,
+        registry=registry,
+    )
+
+    async with session_local() as session:
+
+        result = await orchestrator.run(
+            question="What are the top 5 servers by message count?",
+            session=session,
+        )
+
+        print("\nResult:")
+        print(result)
 
 
 if __name__ == "__main__":
