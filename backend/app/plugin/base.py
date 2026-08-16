@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
+from sqlalchemy.ext.asyncio import AsyncSession
+
 
 
 @dataclass
@@ -16,7 +18,8 @@ class PluginContext:
     Shared context between plugins during a single agent turn.
     """
 
-    def __init__(self):
+    def __init__(self, session: AsyncSession):
+        self.session = session
         self.memory: dict[str, Any] = {}
 
 

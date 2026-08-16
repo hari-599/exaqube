@@ -21,13 +21,12 @@ class QueryPlugin(BasePlugin):
         self,
         context: PluginContext,
         question: str,
-        session: AsyncSession,
     ) -> PluginResult:
         prompt = SQL_SYSTEM_PROMPT.format(question=question)
         sql = await self.llm_client.generate(prompt)
 
         safe_sql = SQLGuard.validate(sql)
-        result = await session.execute(text(safe_sql))
+        result = await context.session.execute(text(safe_sql))
         rows = result.mappings().all()
 
         return PluginResult(

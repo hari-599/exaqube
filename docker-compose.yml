@@ -36,6 +36,9 @@ services:
     env_file:
       - .env
 
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/discord_analytics
+
     ports:
       - "8000:8000"
 
